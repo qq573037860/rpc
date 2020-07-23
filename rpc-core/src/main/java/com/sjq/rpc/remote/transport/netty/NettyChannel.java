@@ -2,7 +2,6 @@ package com.sjq.rpc.remote.transport.netty;
 
 import com.sjq.rpc.domain.RpcException;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;

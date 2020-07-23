@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 public class ExchangeClientCluster {
 
@@ -21,11 +19,12 @@ public class ExchangeClientCluster {
 
     private static final Map<String, AbstractExchangeClient> CLIENT_MAP = new ConcurrentHashMap<>();
     private static final Map<String, Register> REGISTER_MAP = new ConcurrentHashMap<>();
-    private static final Map<String, List<String>> REGISTER_CLIENT_MAP = new ConcurrentHashMap<>();
+    //private static final Map<String, List<String>> REGISTER_CLIENT_MAP = new ConcurrentHashMap<>();
 
     private List<String> keys;
     private boolean useRegisterCenter;
     private String registerServiceName;
+
     //记录上一次获取client的位置，赋值的代码没有加锁存在并发问题，但影响不大
     private volatile int currentClientIndex = 0;
 
@@ -51,7 +50,7 @@ public class ExchangeClientCluster {
                 if (!REGISTER_MAP.containsKey(registerKey)) {
                     REGISTER_MAP.put(registerKey, register);
                     register.subscribe(serviceConfig.getRegisterServiceName(), instances -> {//监听服务实例
-                        List<String> list = REGISTER_CLIENT_MAP.computeIfAbsent(registerKey, value -> Collections.synchronizedList(new ArrayList<>()));
+                        //List<String> list = REGISTER_CLIENT_MAP.computeIfAbsent(registerKey, value -> Collections.synchronizedList(new ArrayList<>()));
                         instances.stream().forEach(instance -> {
                             //保存健康实例
                             if (instance.isHealthy()) {
@@ -61,7 +60,7 @@ public class ExchangeClientCluster {
                                             //实例关闭回调，移除实例
                                             CLIENT_MAP.remove(clientKey);
                                         })));
-                                list.add(clientKey);
+                                //list.add(clientKey);
                             }
                         });
                         logger.info("update service provider list {}", JSONObject.toJSONString(instances));
@@ -129,12 +128,12 @@ public class ExchangeClientCluster {
         }
 
         //随机取一个
-        Random random = new Random();
+        /*Random random = new Random();
         String registerKey = getKey(keys.get(random.nextInt(keys.size())), registerServiceName);
         List<String> clientKeys = REGISTER_CLIENT_MAP.get(registerKey);
         if (Objects.nonNull(clientKeys) && !clientKeys.isEmpty()) {
             return CLIENT_MAP.get(clientKeys.get(random.nextInt(clientKeys.size())));
-        }
+        }*/
         return null;
     }
 

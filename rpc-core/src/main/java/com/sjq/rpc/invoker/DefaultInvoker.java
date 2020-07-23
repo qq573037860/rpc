@@ -5,7 +5,6 @@ import com.sjq.rpc.remote.*;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultInvoker<T> extends RpcInvoker<T> {
 

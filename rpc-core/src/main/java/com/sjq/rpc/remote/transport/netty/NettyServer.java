@@ -2,7 +2,6 @@ package com.sjq.rpc.remote.transport.netty;
 
 import com.sjq.rpc.remote.Channel;
 import com.sjq.rpc.remote.ChannelHandler;
-import com.sjq.rpc.remote.RequestDispatchHandler;
 import com.sjq.rpc.remote.transport.AbstractServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

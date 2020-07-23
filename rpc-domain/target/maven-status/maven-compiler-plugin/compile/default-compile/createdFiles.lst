@@ -1,7 +1,0 @@
-com\sjq\rpc\domain\Constants.class
-com\sjq\rpc\domain\ServerConfig.class
-com\sjq\rpc\domain\Result.class
-com\sjq\rpc\domain\RpcRequest.class
-com\sjq\rpc\domain\RpcException.class
-com\sjq\rpc\domain\RpcResult.class
-com\sjq\rpc\domain\Request.class

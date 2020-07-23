@@ -1,7 +1,6 @@
 package com.sjq.rpc.domain;
 
 import java.io.Serializable;
-import java.util.concurrent.ExecutionException;
 
 public class RpcException extends RuntimeException implements Serializable {
 

@@ -5,16 +5,13 @@ import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.protocol.DefaultProtocol;
 import com.sjq.rpc.protocol.Protocol;
 import com.sjq.rpc.proxy.JavassistProxyFactory;
-import com.sjq.rpc.proxy.RpcClient;
 import com.sjq.rpc.proxy.RpcServer;
-import com.sjq.rpc.remote.transport.netty.NettyServer;
 import com.sjq.rpc.support.IpAddressUtils;
 import com.sjq.rpc.support.PackageScanner;
 import com.sjq.rpc.support.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.Objects;
 
 public class RpcServerBootstrap {

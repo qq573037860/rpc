@@ -3,7 +3,6 @@ package com.sjq.rpc.remote.transport;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.remote.Channel;
 import com.sjq.rpc.remote.ChannelHandler;
-import com.sjq.rpc.remote.ExchangeHandler;
 import com.sjq.rpc.remote.RequestRunnable;
 import com.sjq.rpc.support.NamedThreadFactory;
 

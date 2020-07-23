@@ -1,18 +1,15 @@
 package com.sjq.rpc.remote.transport;
 
 import com.sjq.rpc.domain.Constants;
-import com.sjq.rpc.domain.HostInfo;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.remote.Channel;
 import com.sjq.rpc.remote.ChannelHandler;
 import com.sjq.rpc.remote.Client;
-import com.sjq.rpc.remote.transport.netty.NettyClient;
 import com.sjq.rpc.support.CallBack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 
 public abstract class AbstractClient implements Client, ChannelHandler {

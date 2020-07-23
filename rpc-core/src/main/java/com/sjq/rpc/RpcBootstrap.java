@@ -9,7 +9,6 @@ import com.sjq.rpc.proxy.RpcClient;
 import com.sjq.rpc.support.PackageScanner;
 import com.sjq.rpc.support.StringUtils;
 
-import java.net.URI;
 import java.util.Objects;
 
 public class RpcBootstrap {
