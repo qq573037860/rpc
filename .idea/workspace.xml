@@ -184,6 +184,9 @@
       <replace>TimerTask</replace>
     </replaceStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -290,6 +293,7 @@
     <option name="width" value="1373" />
     <option name="height" value="923" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -581,6 +585,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../dubbo" />
@@ -738,12 +743,12 @@
       <workItem from="1595235548593" duration="10889000" />
       <workItem from="1595298031728" duration="599000" />
       <workItem from="1595379432091" duration="10124000" />
-      <workItem from="1595469064774" duration="1546000" />
+      <workItem from="1595469064774" duration="1929000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="267836000" />
+    <option name="totallyTimeSpent" value="268219000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -758,7 +763,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.6391304" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.24456522" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.24509804" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.30652174" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
