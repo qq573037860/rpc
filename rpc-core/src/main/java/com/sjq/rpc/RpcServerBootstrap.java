@@ -45,10 +45,6 @@ public class RpcServerBootstrap {
         protocol = new DefaultProtocol(new JavassistProxyFactory());
     }
 
-    public static void main(String[] args) {
-        logger.info("123");
-    }
-
     private void registerClass() {
         PackageScanner.scanClassByPackagePathAndAnnotaion(scanPage, new Class[]{RpcServer.class})
             .stream().forEach(cls -> {
