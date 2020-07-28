@@ -3,8 +3,9 @@ package com.sjq.rpc.remote;
 import com.sjq.rpc.domain.Request;
 import com.sjq.rpc.domain.RpcException;
 
-public abstract class AbstractExchangeClient implements Client {
+public abstract class AbstractExchangeClient implements ExchangeClient{
 
+    @Override
     public DefaultFuture request(Request request, int timeout) {
         return doRequest(request, timeout);
     }

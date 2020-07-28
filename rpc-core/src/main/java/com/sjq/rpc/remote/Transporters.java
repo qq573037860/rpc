@@ -2,12 +2,16 @@ package com.sjq.rpc.remote;
 
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
+import com.sjq.rpc.remote.cluster.Cluster;
+import com.sjq.rpc.remote.cluster.ClusterClientInvoker;
+import com.sjq.rpc.remote.cluster.RegisterDirectory;
+import com.sjq.rpc.remote.cluster.StaticDirectory;
 import com.sjq.rpc.remote.transport.DefaultChannelHandlerDelegate;
 import com.sjq.rpc.remote.transport.HeartbeatHandler;
+import com.sjq.rpc.support.spi.ServiceLoader;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 public class Transporters {
@@ -27,16 +31,17 @@ public class Transporters {
         return getTransporter().bind(serverConfig, handlerWrapper(handler));
     }
 
-    public static ExchangeClientCluster connect(ServerConfig serverConfig) {
-        return ExchangeClientCluster.getClient(serverConfig, handlerWrapper());
+    public static ClusterClientInvoker connect(ServerConfig serverConfig) {
+        return getCluster().join(serverConfig.isRegisterCenterForClient()
+            ? new RegisterDirectory(serverConfig, handlerWrapper())
+            : new StaticDirectory(serverConfig, handlerWrapper()));
     }
 
     public static Transporter getTransporter() {
-        Iterator<Transporter> iterator = ServiceLoader.load(Transporter.class).iterator();
-        while (iterator.hasNext()) {
-            return iterator.next();
-        }
-        throw new RpcException(RpcException.INTERRUPTED_EXCEPTION, "not find transporter implementation class");
+        return ServiceLoader.load(Transporter.class);
     }
 
+    public static Cluster getCluster() {
+        return ServiceLoader.load(Cluster.class);
+    }
 }

@@ -27,7 +27,7 @@ public class RpcServerBootstrap {
 
     public void start() {
         initDefault();
-        registerClass();
+        registerService();
     }
 
     private void initDefault() {
@@ -45,7 +45,7 @@ public class RpcServerBootstrap {
         protocol = new DefaultProtocol(new JavassistProxyFactory());
     }
 
-    private void registerClass() {
+    private void registerService() {
         PackageScanner.scanClassByPackagePathAndAnnotaion(scanPage, new Class[]{RpcServer.class})
             .stream().forEach(cls -> {
             //config

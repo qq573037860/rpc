@@ -1,11 +1,18 @@
 package com.sjq.rpc.register;
 
+import com.google.common.collect.Lists;
 import com.sjq.rpc.domain.Instance;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public abstract  class AbstractRegister implements Register {
+
+    //保证统一个serviceName的监听只注册一个
+    private static final Map<String, List<Consumer<List<Instance>>>> CONSUMER_MAP = new ConcurrentHashMap<>();
 
     @Override
     public void createClient(String registerCenterUrl) {
@@ -29,7 +36,16 @@ public abstract  class AbstractRegister implements Register {
 
     @Override
     public void subscribe(String serviceName, Consumer<List<Instance>> callBack) {
-        doSubscribe(serviceName, callBack);
+        List<Consumer<List<Instance>>> consumers = CONSUMER_MAP.computeIfAbsent(serviceName, v -> Collections.synchronizedList(Lists.newArrayList()));
+        if (consumers.size() == 0) {
+            doSubscribe(serviceName, instances -> {
+                consumers.forEach(listConsumer -> {
+                    listConsumer.accept(instances);
+                });
+            });
+        } else {
+            consumers.add(callBack);
+        }
     }
 
     @Override
