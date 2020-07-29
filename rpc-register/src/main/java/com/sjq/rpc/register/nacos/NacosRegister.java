@@ -115,4 +115,9 @@ public class NacosRegister extends AbstractRegister {
                 ins.getIp(), ins.getPort(), ins.isHealthy());
         return instance;
     }
+
+    @Override
+    public boolean isSupportBalance() {
+        return true;
+    }
 }

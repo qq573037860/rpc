@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.sjq.rpc.domain.Instance;
 import com.sjq.rpc.domain.Request;
+import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.register.Register;
 import com.sjq.rpc.register.Registers;
@@ -12,9 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RegisterDirectory implements Directory {
@@ -23,12 +22,18 @@ public class RegisterDirectory implements Directory {
 
     private ServerConfig serviceConfig;
     private ChannelHandler handler;
+    private final boolean useRegisterBalance;
     private List<Register> registers = Lists.newArrayList();
     private final Map<String, ExchangeClient> CLIENT_MAP = new ConcurrentHashMap<>();
 
     public RegisterDirectory(ServerConfig serviceConfig, ChannelHandler handler) {
+        this(serviceConfig, handler, true);
+    }
+
+    public RegisterDirectory(ServerConfig serviceConfig, ChannelHandler handler, boolean useRegisterBalance) {
         this.serviceConfig = serviceConfig;
         this.handler = handler;
+        this.useRegisterBalance = useRegisterBalance;
 
         init();
     }
@@ -44,7 +49,7 @@ public class RegisterDirectory implements Directory {
                 instances.stream().forEach(instance -> {
                     //保存健康实例
                     if (instance.isHealthy()) {
-                        getAndAddClient(instance);
+                        addAndGetClient(instance);
                     }
                     logger.info("update service provider list {}", JSONObject.toJSONString(instances));
                 });
@@ -52,7 +57,7 @@ public class RegisterDirectory implements Directory {
         }
     }
 
-    private ExchangeClient getAndAddClient(Instance instance) {
+    private ExchangeClient addAndGetClient(Instance instance) {
         String clientKey = getKey(instance.getIp(), instance.getPort());
         return CLIENT_MAP.computeIfAbsent(clientKey, value ->
                 new DefaultExchangeClient(Transporters.getTransporter().connect(instance.getIp(), instance.getPort(), serviceConfig, handler, () -> {
@@ -68,12 +73,19 @@ public class RegisterDirectory implements Directory {
 
     @Override
     public ExchangeClient findWithRegister(Request request) {
-        Instance instance = registers.get(new Random().nextInt(registers.size())).selectOneHealthyInstance(serviceConfig.getRegisterServiceName());
-        return getAndAddClient(instance);
+        Optional<Register> optional = registers.stream().filter(register -> register.isSupportBalance()).findAny();
+        if (Objects.isNull(optional.get())) {
+            throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
+        }
+        Instance instance = optional.get().selectOneHealthyInstance(serviceConfig.getRegisterServiceName());
+        if (Objects.isNull(instance)) {
+            throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
+        }
+        return addAndGetClient(instance);
     }
 
     @Override
-    public boolean isRegisterSupportBalance() {
-        return true;
+    public boolean useRegisterBalance() {
+        return useRegisterBalance;
     }
 }

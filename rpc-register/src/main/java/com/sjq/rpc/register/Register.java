@@ -21,4 +21,7 @@ public interface Register {
 
     Instance selectOneHealthyInstance(String serviceName);
 
+    default boolean isSupportBalance() {
+        return false;
+    }
 }
