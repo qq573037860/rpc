@@ -24,7 +24,7 @@ public class NacosRegister extends AbstractRegister {
     protected void doCreateClient(String registerCenterUrl) {
         try {
             this.namingService = NamingFactory.createNamingService(registerCenterUrl);
-        } catch (NacosException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RpcException(String.format("连接注册中心[$s]失败", registerCenterUrl), e);
         }
@@ -34,7 +34,7 @@ public class NacosRegister extends AbstractRegister {
     protected void doRegisterInstance(com.sjq.rpc.domain.Instance ins) {
         try {
             namingService.registerInstance(ins.getServiceName(), toNacosInstance(ins));
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcException(String.format("instance[%s]注册失败", ins), e);
         }
     }
@@ -43,7 +43,7 @@ public class NacosRegister extends AbstractRegister {
     protected void doDeregisterInstance(com.sjq.rpc.domain.Instance ins) {
         try {
             namingService.deregisterInstance(ins.getServiceName(), toNacosInstance(ins));
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcException(String.format("instance[%s]注销失败", ins), e);
         }
     }
@@ -54,7 +54,7 @@ public class NacosRegister extends AbstractRegister {
             List<Instance> instances = namingService.selectInstances(instance.getServiceName(), healthy);
             return CollectionUtils.isEmpty(instances) ? Collections.emptyList() :
                     instances.stream().map(value -> toRpcInstance(value)).collect(Collectors.toList());
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcException(String.format("查找%s的instance[%s]失败", healthy ? "健康" : "不健康", instance), e);
         }
     }
@@ -69,7 +69,7 @@ public class NacosRegister extends AbstractRegister {
                             : instances.stream().map(value -> toRpcInstance(value)).collect(Collectors.toList()));
                 }
             });
-        } catch (NacosException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RpcException(String.format("添加服务[%s]监听失败", serviceName), e);
         }
@@ -81,7 +81,7 @@ public class NacosRegister extends AbstractRegister {
             List<ServiceInfo> list = namingService.getSubscribeServices();
             return Objects.isNull(list) && list.isEmpty() ? Collections.emptyList()
                     : list.stream().map(value -> toRpcServiceInfo(value)).collect(Collectors.toList());
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcException("查询所有监听服务失败", e);
         }
     }
@@ -91,7 +91,7 @@ public class NacosRegister extends AbstractRegister {
         try {
             Instance instance = namingService.selectOneHealthyInstance(serviceName);
             return Objects.isNull(instance) ? null : toRpcInstance(instance);
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcException("查询一个健康实例失败", e);
         }
     }

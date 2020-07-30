@@ -38,31 +38,9 @@ public class RpcBootstrap {
         PackageScanner.scanInterfaceByPackagePathAndAnnotaion(scanPage, new Class[]{RpcClient.class})
             .stream().forEach(cls -> {
 
-            //config
-            RpcClient rpcClient = (RpcClient) cls.getAnnotation(RpcClient.class);
-            ServerConfig config = getConfig(rpcClient);
-
             //referToProxy
-            protocol.referToProxy(cls, config);
+            protocol.referToProxy(cls, serverConfig);
         });
-    }
-
-    private ServerConfig getConfig(RpcClient rpcClient) {
-        ServerConfig config = (ServerConfig) serverConfig.clone();
-        if (Objects.nonNull(rpcClient)) {
-            config.setRegisterServiceName(rpcClient.serviceName());
-            if (StringUtils.isNotEmpty(rpcClient.serverUrl())) {
-                try {
-                    config.setServerUrl(rpcClient.serverUrl());
-                } catch (Exception e) {
-                    throw new RpcException(e);
-                }
-            }
-            if (rpcClient.requestTimeout() > 0) {
-                config.setRequestTimeout(rpcClient.requestTimeout());
-            }
-        }
-        return config;
     }
 
     public RpcBootstrap scanPage(String scanPage) {

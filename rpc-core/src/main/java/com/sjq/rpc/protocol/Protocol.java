@@ -6,9 +6,9 @@ import com.sjq.rpc.invoker.Invoker;
 
 public interface Protocol {
 
-    Object referToProxy(Class type, ServerConfig serverConfig) throws RpcException;
+    <T>T referToProxy(Class<T> type, ServerConfig baseConfig) throws RpcException;
 
-    <T> Invoker<T> referToInvoker(T proxy, Class<T> serviceType, ServerConfig serverConfig) throws RpcException;
+    <T> Invoker<T> referToInvoker(T proxy, Class<T> serviceType, ServerConfig baseConfig) throws RpcException;
 
     <T>T getProxy(Class<T> cls);
 }

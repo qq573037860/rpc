@@ -11,6 +11,8 @@ public class ServerConfig implements Cloneable {
 
     private List<URI> serverUrls = new ArrayList<>();
 
+    private String serverUrl;
+
     private String serverIp;
 
     private String registerCenterUrl;
@@ -64,6 +66,10 @@ public class ServerConfig implements Cloneable {
                 serverUrls.add(uri);
             }
         }
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
     }
 
     public String getServerIp() {
@@ -132,6 +138,8 @@ public class ServerConfig implements Cloneable {
     public boolean isRegisterCenterForServer() {
         return Objects.nonNull(registerCenterUrl) && registerCenterUrl.length() > 0;
     }
+
+
 
     @Override
     public Object clone() {

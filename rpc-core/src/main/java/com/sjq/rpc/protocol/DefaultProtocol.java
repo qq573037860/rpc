@@ -19,7 +19,7 @@ public class DefaultProtocol extends AbstractProtocol {
         @Override
         public CompletableFuture<Object> reply(Channel channel, Object obj) throws RpcException {
             if (!(obj instanceof Request)) {
-                throw  new RpcException(RpcException.INTERRUPTED_EXCEPTION, "obj type is not correct");
+                throw new RpcException(RpcException.INTERRUPTED_EXCEPTION, "obj type is not correct");
             }
 
             Request request = (Request) obj;

@@ -18,7 +18,7 @@ public class RpcServerBootstrap {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcServerBootstrap.class);
 
-    private String scanPage;
+    private String scanPackage;
     private int port;
     private String ip;
     private String registerCenterUrl;
@@ -31,8 +31,8 @@ public class RpcServerBootstrap {
     }
 
     private void initDefault() {
-        if (Objects.isNull(scanPage)) {
-            scanPage = "";
+        if (Objects.isNull(scanPackage)) {
+            scanPackage = "";
         }
         if (port > 0) {
             serverConfig.setServerPort(port);
@@ -46,13 +46,10 @@ public class RpcServerBootstrap {
     }
 
     private void registerService() {
-        PackageScanner.scanClassByPackagePathAndAnnotaion(scanPage, new Class[]{RpcServer.class})
+        PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class})
             .stream().forEach(cls -> {
-            //config
-            RpcServer rpcServer = (RpcServer) cls.getAnnotation(RpcServer.class);
-            ServerConfig config = getConfig(rpcServer);
             try {
-                protocol.referToInvoker(cls.newInstance(), cls.getInterfaces()[0], config);
+                protocol.referToInvoker(cls.newInstance(), cls.getInterfaces()[0], serverConfig);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -62,16 +59,8 @@ public class RpcServerBootstrap {
         });
     }
 
-    private ServerConfig getConfig(RpcServer rpcServer) {
-        ServerConfig config = (ServerConfig) serverConfig.clone();
-        if (Objects.nonNull(rpcServer)) {
-            config.setRegisterServiceName(rpcServer.serviceName());
-        }
-        return config;
-    }
-
     public RpcServerBootstrap scanPage(String scanPage) {
-        this.scanPage = scanPage;
+        this.scanPackage = scanPage;
         return this;
     }
 

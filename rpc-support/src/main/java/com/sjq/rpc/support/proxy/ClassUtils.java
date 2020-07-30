@@ -42,12 +42,18 @@ public class ClassUtils {
         if (clazz == null) {
             throw new NullPointerException("clazz");
         }
-        String className = clazz.getName();
+        /*String className = clazz.getName();
         final int lastDotIdx = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);
         if (lastDotIdx > -1) {
             return className.substring(lastDotIdx + 1);
         }
-        return className;
+        return className;*/
+        return clazz.getSimpleName();
+    }
+
+    public static String humpClassName(Class<?> clazz) {
+        String name = simpleClassName(clazz);
+        return String.valueOf(name.charAt(0)).toLowerCase() + name.substring(1);
     }
 
     public static String fullClassName(Class<?> clazz) {
