@@ -1,1 +1,1 @@
-com.sjq.rpc.remote.cluster.DefaultCluster
+default=com.sjq.rpc.remote.cluster.DefaultCluster

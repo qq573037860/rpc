@@ -1,5 +1,7 @@
 package com.sjq.rpc.proxy;
 
+import com.sjq.rpc.domain.RegisterAnnotation;
+
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
@@ -7,13 +9,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface RpcClient {
 
-    String serverUrl();
+    String serverUrl() default "";
 
     /**
-     * 只针对配置了注册中心的rpc服务生效
+     * 链接注册中心信息
      * @return
      */
-    String serviceName();
+    RegisterAnnotation[] register() default {};
 
     int requestTimeout() default 0;
 

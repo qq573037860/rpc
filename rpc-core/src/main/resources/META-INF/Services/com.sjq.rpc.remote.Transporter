@@ -1,1 +1,1 @@
-com.sjq.rpc.remote.transport.netty.NettyTransporter
+default=com.sjq.rpc.remote.transport.netty.NettyTransporter

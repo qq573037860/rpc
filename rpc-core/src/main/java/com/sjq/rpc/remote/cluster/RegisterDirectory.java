@@ -6,6 +6,7 @@ import com.sjq.rpc.domain.Instance;
 import com.sjq.rpc.domain.Request;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
+import com.sjq.rpc.domain.register.RegisterInfo;
 import com.sjq.rpc.register.Register;
 import com.sjq.rpc.register.Registers;
 import com.sjq.rpc.remote.*;
@@ -39,22 +40,20 @@ public class RegisterDirectory implements Directory {
     }
 
     private void init() {
-        for (URI uri : serviceConfig.getServerUrls()) {
-            String key = getKey(uri.getHost(), uri.getPort());
-            Register register = Registers.getRegisterCenter(key);
-            if (!registers.contains(register)) {
-                registers.add(register);
-            }
-            register.subscribe(serviceConfig.getRegisterServiceName(), instances -> {
-                instances.stream().forEach(instance -> {
-                    //保存健康实例
-                    if (instance.isHealthy()) {
-                        addAndGetClient(instance);
-                    }
-                    logger.info("update service provider list {}", JSONObject.toJSONString(instances));
-                });
-            });
+        RegisterInfo registerInfo = serviceConfig.getRegister();
+        Register register = Registers.getRegisterCenter(registerInfo);
+        if (!registers.contains(register)) {
+            registers.add(register);
         }
+        register.subscribe(registerInfo.getServiceName(), instances -> {
+            instances.stream().forEach(instance -> {
+                //保存健康实例
+                if (instance.isHealthy()) {
+                    addAndGetClient(instance);
+                }
+                logger.info("update service provider list {}", JSONObject.toJSONString(instances));
+            });
+        });
     }
 
     private ExchangeClient addAndGetClient(Instance instance) {
@@ -77,7 +76,7 @@ public class RegisterDirectory implements Directory {
         if (Objects.isNull(optional.get())) {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
         }
-        Instance instance = optional.get().selectOneHealthyInstance(serviceConfig.getRegisterServiceName());
+        Instance instance = optional.get().selectOneHealthyInstance(serviceConfig.getRegister().getServiceName());
         if (Objects.isNull(instance)) {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
         }

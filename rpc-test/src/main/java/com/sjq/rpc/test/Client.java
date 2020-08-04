@@ -1,17 +1,13 @@
 package com.sjq.rpc.test;
 
 import com.sjq.rpc.RpcBootstrap;
-import com.sjq.rpc.RpcServerBootstrap;
-import com.sjq.rpc.domain.Constants;
 import com.sjq.rpc.domain.ServerConfig;
-import com.sjq.rpc.test.test1.test1_1;
 import com.sjq.rpc.test.test1.test2.api.test2_1;
 import com.sjq.rpc.test.test1.test2.api.test2_2;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
-public class Test {
+public class Client {
 
     private static final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
@@ -69,9 +65,9 @@ public class Test {
         });
         thread.setName("print");
         Runtime.getRuntime().addShutdownHook(thread);*/
-        Test test = new Test();
-        synchronized (test) {
-            test.wait();
+        Client client = new Client();
+        synchronized (client) {
+            client.wait();
         }
     }
 

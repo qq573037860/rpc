@@ -1,13 +1,16 @@
 package com.sjq.rpc.protocol;
 
+import com.sjq.rpc.domain.RegisterAnnotation;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
+import com.sjq.rpc.domain.register.RegisterInfo;
 import com.sjq.rpc.invoker.Invoker;
 import com.sjq.rpc.proxy.ProxyFactory;
 import com.sjq.rpc.proxy.RpcClient;
 import com.sjq.rpc.proxy.RpcServer;
 import com.sjq.rpc.register.Registers;
 import com.sjq.rpc.remote.Server;
+import com.sjq.rpc.support.IpAddressUtils;
 import com.sjq.rpc.support.StringUtils;
 import com.sjq.rpc.support.proxy.ClassUtils;
 import java.util.Map;
@@ -54,7 +57,7 @@ public abstract class AbstractProtocol implements Protocol {
                 }
             }
         }
-        if (serverConfig.isRegisterCenterForServer()) {//注册服务到注册中心
+        if (serverConfig.isRegisterCenter()) {//注册服务到注册中心
             Registers.getRegisterCenterWithRegister(serverConfig);
         }
         return invoker;
@@ -70,9 +73,12 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     private ServerConfig getConfig(RpcClient rpcClient, ServerConfig baseConfig) {
-        ServerConfig config = (ServerConfig) baseConfig.clone();
+        ServerConfig config = baseConfig.clone();
         if (Objects.nonNull(rpcClient)) {
-            config.setRegisterServiceName(rpcClient.serviceName());
+            RegisterAnnotation[] registerAnnotations = rpcClient.register();
+            if (Objects.nonNull(registerAnnotations) && registerAnnotations.length > 0) {
+                config.setRegister(RegisterInfo.convertToDomain(registerAnnotations[0]));
+            }
             if (StringUtils.isNotEmpty(rpcClient.serverUrl())) {
                 try {
                     config.setServerUrl(rpcClient.serverUrl());
@@ -88,9 +94,15 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     private ServerConfig getConfig(RpcServer rpcServer, ServerConfig baseConfig) {
-        ServerConfig config = (ServerConfig) baseConfig.clone();
+        ServerConfig config = baseConfig.clone();
         if (Objects.nonNull(rpcServer)) {
-            config.setRegisterServiceName(rpcServer.serviceName());
+            RegisterAnnotation[] registerAnnotations = rpcServer.register();
+            if (Objects.nonNull(registerAnnotations) && registerAnnotations.length > 0) {
+                config.setRegister(RegisterInfo.convertToDomain(registerAnnotations[0]));
+            }
+        }
+        if (StringUtils.isEmpty(config.getServerIp())) {
+            config.setServerIp(IpAddressUtils.getIpAddress());
         }
         return config;
     }

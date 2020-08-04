@@ -9,14 +9,17 @@ import com.sjq.rpc.support.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Objects;
 
-public class ServerBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+public class ServerBeanFactoryPostProcessor implements InitializingBean, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerBeanFactoryPostProcessor.class);
+
+    private ApplicationContext applicationContext;
 
     private String[] basePackages;
 
@@ -40,19 +43,13 @@ public class ServerBeanFactoryPostProcessor implements BeanFactoryPostProcessor 
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        registerServerBean(beanFactory);
-    }
-
-    private void registerServerBean(ConfigurableListableBeanFactory beanFactory) {
-        Protocol protocol = beanFactory.getBean(Protocol.class);
-        SpringServerConfig baseConfig = beanFactory.getBean(SpringServerConfig.class);
+    public void afterPropertiesSet() throws Exception {
         for (String scanPackage: basePackages) {
             PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class})
                     .stream().forEach(cls -> {
                 Object bean = null;
                 try {
-                    bean = beanFactory.getBean(cls);
+                    bean = applicationContext.getBean(cls);
                 } catch (Exception e) {
                 }
                 if (Objects.isNull(bean)) {
@@ -64,9 +61,16 @@ public class ServerBeanFactoryPostProcessor implements BeanFactoryPostProcessor 
                         e.printStackTrace();
                     }
                 }
+                Protocol protocol = applicationContext.getBean(Protocol.class);
+                SpringServerConfig baseConfig = applicationContext.getBean(SpringServerConfig.class);
                 protocol.referToInvoker(bean, cls.getInterfaces()[0], baseConfig);
                 logger.info(cls + "服务暴露成功");
             });
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

@@ -2,11 +2,11 @@ package com.sjq.rpc;
 
 import com.sjq.rpc.domain.Constants;
 import com.sjq.rpc.domain.ServerConfig;
+import com.sjq.rpc.domain.register.RegisterInfo;
 import com.sjq.rpc.protocol.DefaultProtocol;
 import com.sjq.rpc.protocol.Protocol;
 import com.sjq.rpc.proxy.JavassistProxyFactory;
 import com.sjq.rpc.proxy.RpcServer;
-import com.sjq.rpc.support.IpAddressUtils;
 import com.sjq.rpc.support.PackageScanner;
 import com.sjq.rpc.support.StringUtils;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class RpcServerBootstrap {
     private String scanPackage;
     private int port;
     private String ip;
-    private String registerCenterUrl;
+    private RegisterInfo registerInfo;
     private ServerConfig serverConfig = new ServerConfig();
     private Protocol protocol;
 
@@ -37,9 +37,11 @@ public class RpcServerBootstrap {
         if (port > 0) {
             serverConfig.setServerPort(port);
         }
-        serverConfig.setServerIp(StringUtils.isNotEmpty(ip) ? ip : IpAddressUtils.getIpAddress());
-        if (StringUtils.isNotEmpty(registerCenterUrl)) {
-            serverConfig.setRegisterCenterUrl(registerCenterUrl);
+        if (StringUtils.isNotEmpty(ip)) {
+            serverConfig.setServerIp(ip);
+        }
+        if (Objects.nonNull(registerInfo)) {
+            serverConfig.setRegister(registerInfo);
         }
         serverConfig.setHeartbeatTimeout(Constants.DEFAULT_HEARTBEAT*2);
         protocol = new DefaultProtocol(new JavassistProxyFactory());
@@ -74,8 +76,8 @@ public class RpcServerBootstrap {
         return this;
     }
 
-    public RpcServerBootstrap registerCenterUrl(String registerCenterUrl) {
-        this.registerCenterUrl = registerCenterUrl;
+    public RpcServerBootstrap register(RegisterInfo registerInfo) {
+        this.registerInfo = registerInfo;
         return this;
     }
 }

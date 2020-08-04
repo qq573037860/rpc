@@ -1,23 +1,23 @@
 package com.sjq.rpc.domain;
 
 
+import com.sjq.rpc.domain.register.RegisterInfo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ServerConfig implements Cloneable {
+public class ServerConfig {
 
     private List<URI> serverUrls = new ArrayList<>();
 
-    private String serverUrl;
-
     private String serverIp;
 
-    private String registerCenterUrl;
-
-    private String registerServiceName = Constants.DEFAULT_SERVICE_NAME;
+    private RegisterInfo register;
 
     private int serverPort = Constants.DEFAULT_SERVER_PORT;
 
@@ -50,7 +50,6 @@ public class ServerConfig implements Cloneable {
 
     public void setServerUrl(String serverUrl) {
         if (Objects.nonNull(serverUrl) && serverUrl.length() > 0) {
-            String scheme = null;
             for (String url : serverUrl.split(",")) {
                 URI uri;
                 try {
@@ -58,18 +57,12 @@ public class ServerConfig implements Cloneable {
                 } catch (URISyntaxException e) {
                     throw new RpcException(e);
                 }
-                if (Objects.isNull(scheme)) {
-                    scheme = uri.getScheme();
-                } else if (!scheme.equals(uri.getScheme())) {
-                    throw new RpcException("do not support set multiple protocols at once");
+                if (!StringUtils.isEmpty(uri.getScheme())) {
+                    throw new RpcException(String.format("do not support %s protocol", uri.getScheme()));
                 }
                 serverUrls.add(uri);
             }
         }
-    }
-
-    public String getServerUrl() {
-        return serverUrl;
     }
 
     public String getServerIp() {
@@ -78,22 +71,6 @@ public class ServerConfig implements Cloneable {
 
     public void setServerIp(String serverIp) {
         this.serverIp = serverIp;
-    }
-
-    public String getRegisterCenterUrl() {
-        return registerCenterUrl;
-    }
-
-    public void setRegisterCenterUrl(String registerCenterUrl) {
-        this.registerCenterUrl = registerCenterUrl;
-    }
-
-    public String getRegisterServiceName() {
-        return registerServiceName;
-    }
-
-    public void setRegisterServiceName(String registerServiceName) {
-        this.registerServiceName = registerServiceName;
     }
 
     public int getServerPort() {
@@ -128,26 +105,21 @@ public class ServerConfig implements Cloneable {
         this.heartbeatTimeout = heartbeatTimeout;
     }
 
-    public boolean isRegisterCenterForClient() {
-        if (Objects.isNull(serverUrls) && serverUrls.isEmpty()) {
-            throw new RpcException(RpcException.INVALID_ARGUMENT_EXCEPTION, "serverUrl is null");
-        }
-        return "register".equals(serverUrls.get(0).getScheme());
+    public boolean isRegisterCenter() {
+        return Objects.nonNull(register);
     }
 
-    public boolean isRegisterCenterForServer() {
-        return Objects.nonNull(registerCenterUrl) && registerCenterUrl.length() > 0;
+    public RegisterInfo getRegister() {
+        return register;
     }
 
+    public void setRegister(RegisterInfo register) {
+        this.register = register;
+    }
 
-
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ServerConfig clone() {
+        ServerConfig target = new ServerConfig();
+        BeanUtils.copyProperties(this, target);
+        return target;
     }
 }

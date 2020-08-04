@@ -13,6 +13,12 @@
     <version>${rpc-module-version}</version>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
     </dependencies>
 
 

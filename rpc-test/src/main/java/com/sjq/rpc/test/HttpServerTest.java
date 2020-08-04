@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-public class HttpTest {
+public class HttpServerTest {
 
     public static void main(String[] args) {
         HttpServer server = null;

@@ -1,6 +1,5 @@
 package com.sjq.rpc.remote;
 
-import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.remote.cluster.Cluster;
 import com.sjq.rpc.remote.cluster.ClusterClientInvoker;
@@ -8,10 +7,9 @@ import com.sjq.rpc.remote.cluster.RegisterDirectory;
 import com.sjq.rpc.remote.cluster.StaticDirectory;
 import com.sjq.rpc.remote.transport.DefaultChannelHandlerDelegate;
 import com.sjq.rpc.remote.transport.HeartbeatHandler;
-import com.sjq.rpc.support.spi.ServiceLoader;
+import com.sjq.rpc.support.spi.ServiceLoaders;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class Transporters {
@@ -32,16 +30,16 @@ public class Transporters {
     }
 
     public static ClusterClientInvoker connect(ServerConfig serverConfig) {
-        return getCluster().join(serverConfig.isRegisterCenterForClient()
+        return getCluster().join(serverConfig.isRegisterCenter()
             ? new RegisterDirectory(serverConfig, handlerWrapper())
             : new StaticDirectory(serverConfig, handlerWrapper()));
     }
 
     public static Transporter getTransporter() {
-        return ServiceLoader.load(Transporter.class);
+        return ServiceLoaders.load(Transporter.class, "default");
     }
 
     public static Cluster getCluster() {
-        return ServiceLoader.load(Cluster.class);
+        return ServiceLoaders.load(Cluster.class, "default");
     }
 }

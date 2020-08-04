@@ -1,1 +1,1 @@
-com.sjq.rpc.register.nacos.NacosRegister
+nacos=com.sjq.rpc.register.nacos.NacosRegister

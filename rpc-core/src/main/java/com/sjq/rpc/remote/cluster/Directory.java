@@ -11,7 +11,7 @@ public interface Directory {
     List<ExchangeClient> list(Request request);
 
     default ExchangeClient findWithRegister(Request request) {
-        throw new RpcException(RpcException.EXECUTION_EXCEPTION, "Register not support Balance");
+        throw new RpcException(RpcException.EXECUTION_EXCEPTION, "Register do not support Balance");
     }
 
     default boolean useRegisterBalance() {

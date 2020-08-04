@@ -1,15 +1,16 @@
 package com.sjq.rpc.test;
 
 import com.sjq.rpc.RpcServerBootstrap;
+import com.sjq.rpc.domain.register.RegisterInfo;
 
-public class TestServer1 {
+public class Server {
 
     public static void main(String[] args) throws InterruptedException {
         RpcServerBootstrap serverBootstrap = new RpcServerBootstrap();
-        serverBootstrap.port(9999).registerCenterUrl("http://127.0.0.1:8848").start();
+        serverBootstrap.port(9999).register(new RegisterInfo("http://127.0.0.1:8848", "nacos", "service_demo")).start();
         System.out.println("RpcServerBootstrap[9999] 启动完毕");
 
-        TestServer1 test = new TestServer1();
+        Server test = new Server();
         synchronized (test) {
             test.wait();
         }
