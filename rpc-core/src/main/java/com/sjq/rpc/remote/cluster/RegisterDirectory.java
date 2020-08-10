@@ -49,14 +49,14 @@ public class RegisterDirectory implements Directory {
             instances.stream().forEach(instance -> {
                 //保存健康实例
                 if (instance.isHealthy()) {
-                    addAndGetClient(instance);
+                    setAndGetClient(instance);
                 }
                 logger.info("update service provider list {}", JSONObject.toJSONString(instances));
             });
         });
     }
 
-    private ExchangeClient addAndGetClient(Instance instance) {
+    private ExchangeClient setAndGetClient(Instance instance) {
         String clientKey = getKey(instance.getIp(), instance.getPort());
         return CLIENT_MAP.computeIfAbsent(clientKey, value ->
                 new DefaultExchangeClient(Transporters.getTransporter().connect(instance.getIp(), instance.getPort(), serviceConfig, handler, () -> {
@@ -80,7 +80,7 @@ public class RegisterDirectory implements Directory {
         if (Objects.isNull(instance)) {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
         }
-        return addAndGetClient(instance);
+        return setAndGetClient(instance);
     }
 
     @Override

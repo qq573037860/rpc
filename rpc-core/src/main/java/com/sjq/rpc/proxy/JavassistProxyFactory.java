@@ -15,7 +15,6 @@ public class JavassistProxyFactory implements ProxyFactory {
 
     @Override
     public <T> Invoker<T> getInvoker(T proxy) throws RpcException {
-        // TODO Wrapper cannot handle this scenario correctly: the classname contains '$'
         final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass());
         return new AbstractProxyInvoker<T>(proxy) {
             @Override
