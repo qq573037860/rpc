@@ -2,7 +2,7 @@ package com.sjq.rpc.remote.cluster;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.sjq.rpc.domain.Instance;
+import com.sjq.rpc.domain.register.Instance;
 import com.sjq.rpc.domain.Request;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
@@ -13,7 +13,6 @@ import com.sjq.rpc.remote.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

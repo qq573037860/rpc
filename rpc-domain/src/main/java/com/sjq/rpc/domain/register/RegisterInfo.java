@@ -1,7 +1,5 @@
 package com.sjq.rpc.domain.register;
 
-import com.sjq.rpc.domain.RegisterAnnotation;
-
 public class RegisterInfo {
 
     private String url;

@@ -1,6 +1,6 @@
 package com.sjq.rpc.test.test1.test2.api;
 
-import com.sjq.rpc.domain.RegisterAnnotation;
+import com.sjq.rpc.domain.register.RegisterAnnotation;
 import com.sjq.rpc.proxy.RpcClient;
 
 @RpcClient(register = {

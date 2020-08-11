@@ -1,6 +1,6 @@
 package com.sjq.rpc.register;
 
-import com.sjq.rpc.domain.Instance;
+import com.sjq.rpc.domain.register.Instance;
 import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.domain.register.RegisterInfo;
 import com.sjq.rpc.support.spi.ServiceLoaders;

@@ -1,8 +1,7 @@
 package com.sjq.rpc.register;
 
 import com.google.common.collect.Lists;
-import com.sjq.rpc.domain.Instance;
-import com.sjq.rpc.domain.RpcException;
+import com.sjq.rpc.domain.register.Instance;
 
 import java.util.Collections;
 import java.util.List;

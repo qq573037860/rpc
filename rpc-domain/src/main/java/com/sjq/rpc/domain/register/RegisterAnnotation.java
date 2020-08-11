@@ -1,4 +1,4 @@
-package com.sjq.rpc.domain;
+package com.sjq.rpc.domain.register;
 
 import java.lang.annotation.*;
 

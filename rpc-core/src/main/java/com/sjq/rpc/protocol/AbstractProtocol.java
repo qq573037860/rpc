@@ -1,6 +1,6 @@
 package com.sjq.rpc.protocol;
 
-import com.sjq.rpc.domain.RegisterAnnotation;
+import com.sjq.rpc.domain.register.RegisterAnnotation;
 import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.domain.register.RegisterInfo;

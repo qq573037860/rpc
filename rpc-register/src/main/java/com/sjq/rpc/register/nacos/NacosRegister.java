@@ -1,6 +1,5 @@
 package com.sjq.rpc.register.nacos;
 
-import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
@@ -31,7 +30,7 @@ public class NacosRegister extends AbstractRegister {
     }
 
     @Override
-    protected void doRegisterInstance(com.sjq.rpc.domain.Instance ins) {
+    protected void doRegisterInstance(com.sjq.rpc.domain.register.Instance ins) {
         try {
             namingService.registerInstance(ins.getServiceName(), toNacosInstance(ins));
         } catch (Exception e) {
@@ -40,7 +39,7 @@ public class NacosRegister extends AbstractRegister {
     }
 
     @Override
-    protected void doDeregisterInstance(com.sjq.rpc.domain.Instance ins) {
+    protected void doDeregisterInstance(com.sjq.rpc.domain.register.Instance ins) {
         try {
             namingService.deregisterInstance(ins.getServiceName(), toNacosInstance(ins));
         } catch (Exception e) {
@@ -49,7 +48,7 @@ public class NacosRegister extends AbstractRegister {
     }
 
     @Override
-    protected List<com.sjq.rpc.domain.Instance> doSelectInstances(com.sjq.rpc.domain.Instance instance, boolean healthy) {
+    protected List<com.sjq.rpc.domain.register.Instance> doSelectInstances(com.sjq.rpc.domain.register.Instance instance, boolean healthy) {
         try {
             List<Instance> instances = namingService.selectInstances(instance.getServiceName(), healthy);
             return CollectionUtils.isEmpty(instances) ? Collections.emptyList() :
@@ -60,7 +59,7 @@ public class NacosRegister extends AbstractRegister {
     }
 
     @Override
-    protected void doSubscribe(String serviceName, Consumer<List<com.sjq.rpc.domain.Instance>> callBack) {
+    protected void doSubscribe(String serviceName, Consumer<List<com.sjq.rpc.domain.register.Instance>> callBack) {
         try {
             namingService.subscribe(serviceName, event -> {
                 if (event instanceof NamingEvent) {
@@ -87,7 +86,7 @@ public class NacosRegister extends AbstractRegister {
     }
 
     @Override
-    protected com.sjq.rpc.domain.Instance doSelectOneHealthyInstance(String serviceName) {
+    protected com.sjq.rpc.domain.register.Instance doSelectOneHealthyInstance(String serviceName) {
         try {
             Instance instance = namingService.selectOneHealthyInstance(serviceName);
             return Objects.isNull(instance) ? null : toRpcInstance(instance);
@@ -102,7 +101,7 @@ public class NacosRegister extends AbstractRegister {
         return info;
     }
 
-    private Instance toNacosInstance(com.sjq.rpc.domain.Instance ins) {
+    private Instance toNacosInstance(com.sjq.rpc.domain.register.Instance ins) {
         Instance instance = new Instance();
         instance.setServiceName(ins.getServiceName());
         instance.setIp(ins.getIp());
@@ -110,8 +109,8 @@ public class NacosRegister extends AbstractRegister {
         return instance;
     }
 
-    private com.sjq.rpc.domain.Instance toRpcInstance(Instance ins) {
-        com.sjq.rpc.domain.Instance instance = new com.sjq.rpc.domain.Instance(ins.getServiceName(),
+    private com.sjq.rpc.domain.register.Instance toRpcInstance(Instance ins) {
+        com.sjq.rpc.domain.register.Instance instance = new com.sjq.rpc.domain.register.Instance(ins.getServiceName(),
                 ins.getIp(), ins.getPort(), ins.isHealthy());
         return instance;
     }

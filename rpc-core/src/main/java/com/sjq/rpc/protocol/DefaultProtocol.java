@@ -18,9 +18,6 @@ public class DefaultProtocol extends AbstractProtocol {
 
         @Override
         public CompletableFuture<Object> reply(Channel channel, Object obj) throws RpcException {
-            if (!(obj instanceof Request)) {
-                throw new RpcException(RpcException.INTERRUPTED_EXCEPTION, "obj type is not correct");
-            }
 
             Request request = (Request) obj;
             Invoker invoker = getServerInvoker(request.getInterfaceServiceFullName());
@@ -32,7 +29,11 @@ public class DefaultProtocol extends AbstractProtocol {
 
         @Override
         public void received(Channel channel, Object message) throws RpcException {
-
+            if (message instanceof Request) {
+                reply(channel, message);
+            } else {
+                throw new RpcException(RpcException.INTERRUPTED_EXCEPTION, "message type is not supported");
+            }
         }
     };
 

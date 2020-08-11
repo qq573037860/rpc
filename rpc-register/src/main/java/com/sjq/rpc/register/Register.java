@@ -1,6 +1,6 @@
 package com.sjq.rpc.register;
 
-import com.sjq.rpc.domain.Instance;
+import com.sjq.rpc.domain.register.Instance;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -1,6 +1,6 @@
 package com.sjq.rpc.proxy;
 
-import com.sjq.rpc.domain.RegisterAnnotation;
+import com.sjq.rpc.domain.register.RegisterAnnotation;
 
 import java.lang.annotation.*;
 
