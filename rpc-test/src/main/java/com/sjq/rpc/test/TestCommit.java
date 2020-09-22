@@ -4,4 +4,6 @@ public class TestCommit {
 
     private String a;
 
+    private String b;
+
 }
