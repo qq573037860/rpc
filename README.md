@@ -1,2 +1,2 @@
 # rpc
-rpc_demo
+参照dubbo写的rpc_demo
