@@ -21,8 +21,8 @@ public class NettyClient extends AbstractClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private Bootstrap bootstrap;
     private static final EventLoopGroup WORK_GROUP = eventLoopGroup(1, "NettyClientWorker");
+    private Bootstrap bootstrap;
     private volatile io.netty.channel.Channel channel;
 
     public NettyClient(String ip, int port, int connectTimeout, int heartbeatTimeout, com.sjq.rpc.remote.ChannelHandler handler, CallBack closeCallBack) {
@@ -41,7 +41,7 @@ public class NettyClient extends AbstractClient {
                 .channel(socketChannelClass())
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel sc) throws Exception {
+                    protected void initChannel(SocketChannel sc) {
                         sc.pipeline().addLast("decoder", new NettyDecoder())
                                     .addLast("encoder", new NettyEncoder())
                                     .addLast("client-idle-handler", new IdleStateHandler(getHeartbeatTimeout(), 0, 0, MILLISECONDS))

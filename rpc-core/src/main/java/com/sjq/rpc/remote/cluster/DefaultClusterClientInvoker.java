@@ -45,7 +45,7 @@ public class DefaultClusterClientInvoker extends AbstractClusterClientInvoker {
             }
         }
 
-        if (Objects.isNull(!client.isActive())) {
+        if (Objects.isNull(client) || !client.isActive()) {
             throw new RpcException("no available service provider");
         }
         return client.request(request, timeout);

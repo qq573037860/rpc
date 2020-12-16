@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class StaticDirectory implements Directory {
 
-    private ServerConfig serviceConfig;
-    private ChannelHandler handler;
+    private final ServerConfig serviceConfig;
+    private final ChannelHandler handler;
 
     private final Map<String, ExchangeClient> CLIENT_MAP = new ConcurrentHashMap<>();
 

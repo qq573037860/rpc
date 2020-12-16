@@ -7,7 +7,7 @@ import io.protostuff.runtime.RuntimeSchema;
 
 public class ProtostuffSerialize implements ObjectSerialize {
 
-    private static LinkedBuffer buffer = LinkedBuffer.allocate();
+    private final LinkedBuffer buffer = LinkedBuffer.allocate();
 
     @Override
     public byte[] serialize(Object obj) {

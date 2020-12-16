@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public abstract class AbstractClusterClientInvoker implements ClusterClientInvoker {
 
-    private Directory directory;
+    private final Directory directory;
 
     AbstractClusterClientInvoker(Directory directory) {
         Objects.requireNonNull(directory);
@@ -24,13 +24,12 @@ public abstract class AbstractClusterClientInvoker implements ClusterClientInvok
             try {
                 return directory.findWithRegister(request).request(request, timeout);
             } catch (RpcException e) {
-
             }
         }
         return doRequest(request, timeout);
     }
 
-    protected List<ExchangeClient> getClients(Request request) {
+    List<ExchangeClient> getClients(Request request) {
         return directory.list(request);
     }
 

@@ -12,11 +12,11 @@ import java.util.concurrent.Executors;
 
 public  abstract class AbstractChannelHandlerDelegate implements ChannelHandlerDelegate {
 
-    private ExecutorService executorService = Executors.newCachedThreadPool(new NamedThreadFactory());
+    private final ExecutorService executorService = Executors.newCachedThreadPool(new NamedThreadFactory());
 
-    protected ChannelHandler handler;
+    protected final ChannelHandler handler;
 
-    protected AbstractChannelHandlerDelegate(ChannelHandler handler) {
+    AbstractChannelHandlerDelegate(ChannelHandler handler) {
         Objects.requireNonNull(handler, "handler can not be null");
         this.handler = handler;
     }

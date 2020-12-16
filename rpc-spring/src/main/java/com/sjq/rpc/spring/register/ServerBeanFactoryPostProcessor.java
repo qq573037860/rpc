@@ -55,9 +55,7 @@ public class ServerBeanFactoryPostProcessor implements InitializingBean, Applica
                 if (Objects.isNull(bean)) {
                     try {
                         bean = cls.newInstance();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }

@@ -21,10 +21,10 @@ public abstract class AbstractClient implements Client, ChannelHandler {
     private int connectTimeout;
     private int heartbeatTimeout;
     private volatile boolean closed;
-    private ChannelHandler handler;
-    private CallBack closeCallBack;
+    private final ChannelHandler handler;
+    private final CallBack closeCallBack;
 
-    protected int retryTime = Constants.CLIENT_RETRY_TIME;
+    private int retryTime = Constants.CLIENT_RETRY_TIME;
 
     public AbstractClient(String ip, int port, int connectTimeout, int heartbeatTimeout, ChannelHandler handler, CallBack closeCallBack) {
         Objects.requireNonNull(handler);

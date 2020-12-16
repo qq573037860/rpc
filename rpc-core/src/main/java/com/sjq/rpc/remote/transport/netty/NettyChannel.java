@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NettyChannel implements com.sjq.rpc.remote.Channel {
 
-    private Channel channel;
-    private String hostAddress;
+    private final Channel channel;
+    private final String hostAddress;
 
     private static final ConcurrentHashMap<Channel, NettyChannel> channelMap = new ConcurrentHashMap<>();
 

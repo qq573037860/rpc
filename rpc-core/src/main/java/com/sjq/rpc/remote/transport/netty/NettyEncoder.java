@@ -9,7 +9,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class NettyEncoder extends MessageToByteEncoder {
 
-    private ObjectSerialize serialize = new ProtostuffSerialize();
+    private final ObjectSerialize serialize = new ProtostuffSerialize();
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {

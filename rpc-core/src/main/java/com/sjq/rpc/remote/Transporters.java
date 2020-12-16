@@ -21,8 +21,8 @@ public class Transporters {
     }
 
     private static ChannelHandler handlerWrapper(ExchangeHandler...handler) {
-        return new HeartbeatHandler(new RequestDispatchHandler(Arrays.asList(handler).stream().
-                map(h -> new DefaultChannelHandlerDelegate(h)).collect(Collectors.toList())));
+        return new HeartbeatHandler(new RequestDispatchHandler(Arrays.stream(handler).
+                map(DefaultChannelHandlerDelegate::new).collect(Collectors.toList())));
     }
 
     public static Server bind(ServerConfig serverConfig, ExchangeHandler...handler) {
@@ -30,9 +30,8 @@ public class Transporters {
     }
 
     public static ClusterClientInvoker connect(ServerConfig serverConfig) {
-        return getCluster().join(serverConfig.isRegisterCenter()
-            ? new RegisterDirectory(serverConfig, handlerWrapper())
-            : new StaticDirectory(serverConfig, handlerWrapper()));
+        return getCluster().join(serverConfig.isRegisterCenter() ? new RegisterDirectory(serverConfig, handlerWrapper())
+                : new StaticDirectory(serverConfig, handlerWrapper()));
     }
 
     public static Transporter getTransporter() {

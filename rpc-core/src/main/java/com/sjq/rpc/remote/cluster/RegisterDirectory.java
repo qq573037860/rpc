@@ -12,18 +12,21 @@ import com.sjq.rpc.register.Registers;
 import com.sjq.rpc.remote.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class RegisterDirectory implements Directory {
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterDirectory.class);
 
-    private ServerConfig serviceConfig;
-    private ChannelHandler handler;
+    private final ServerConfig serviceConfig;
+    private final ChannelHandler handler;
     private final boolean useRegisterBalance;
-    private List<Register> registers = Lists.newArrayList();
+    private final List<Register> REGISTERS = Lists.newArrayList();
     private final Map<String, ExchangeClient> CLIENT_MAP = new ConcurrentHashMap<>();
 
     public RegisterDirectory(ServerConfig serviceConfig, ChannelHandler handler) {
@@ -41,11 +44,11 @@ public class RegisterDirectory implements Directory {
     private void init() {
         RegisterInfo registerInfo = serviceConfig.getRegister();
         Register register = Registers.getRegisterCenter(registerInfo);
-        if (!registers.contains(register)) {
-            registers.add(register);
+        if (!REGISTERS.contains(register)) {
+            REGISTERS.add(register);
         }
         register.subscribe(registerInfo.getServiceName(), instances -> {
-            instances.stream().forEach(instance -> {
+            instances.forEach(instance -> {
                 //保存健康实例
                 if (instance.isHealthy()) {
                     setAndGetClient(instance);
@@ -71,11 +74,12 @@ public class RegisterDirectory implements Directory {
 
     @Override
     public ExchangeClient findWithRegister(Request request) {
-        Optional<Register> optional = registers.stream().filter(register -> register.isSupportBalance()).findAny();
-        if (Objects.isNull(optional.get())) {
+        List<Register> balanceRegisters = REGISTERS.stream().filter(Register::isSupportBalance).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(balanceRegisters)) {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
         }
-        Instance instance = optional.get().selectOneHealthyInstance(serviceConfig.getRegister().getServiceName());
+        Instance instance = balanceRegisters.get(ThreadLocalRandom.current().nextInt(balanceRegisters.size()))
+                .selectOneHealthyInstance(serviceConfig.getRegister().getServiceName());
         if (Objects.isNull(instance)) {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "no available service provider");
         }

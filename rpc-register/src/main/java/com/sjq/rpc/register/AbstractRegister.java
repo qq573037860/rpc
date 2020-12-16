@@ -1,5 +1,6 @@
 package com.sjq.rpc.register;
 
+import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.google.common.collect.Lists;
 import com.sjq.rpc.domain.register.Instance;
 
@@ -37,12 +38,8 @@ public abstract  class AbstractRegister implements Register {
     @Override
     public void subscribe(String serviceName, Consumer<List<Instance>> callBack) {
         List<Consumer<List<Instance>>> consumers = CONSUMER_MAP.computeIfAbsent(serviceName, v -> Collections.synchronizedList(Lists.newArrayList()));
-        if (consumers.size() == 0) {
-            doSubscribe(serviceName, instances -> {
-                consumers.forEach(listConsumer -> {
-                    listConsumer.accept(instances);
-                });
-            });
+        if (CollectionUtils.isEmpty(consumers)) {
+            doSubscribe(serviceName, instances -> consumers.forEach(listConsumer -> listConsumer.accept(instances)));
         } else {
             consumers.add(callBack);
         }

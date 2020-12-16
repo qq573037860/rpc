@@ -5,8 +5,6 @@ import com.sjq.rpc.domain.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * InvokerWrapper
  */
@@ -31,8 +29,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
     @Override
     public Object invoke(Request request) throws RpcException {
         try {
-            Object value = doInvoke(proxy, request.getMethodName(), request.getParameterTypes(), request.getParameters());
-            return value;
+            return doInvoke(proxy, request.getMethodName(), request.getParameterTypes(), request.getParameters());
         } catch (Throwable e) {
             throw new RpcException("Failed to invoke proxy method " + request.getMethodName() + ", cause: " + e.getMessage(), e);
         }

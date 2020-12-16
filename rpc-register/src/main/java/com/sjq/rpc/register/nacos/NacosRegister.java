@@ -22,10 +22,10 @@ public class NacosRegister extends AbstractRegister {
     @Override
     protected void doCreateClient(String registerCenterUrl) {
         try {
-            this.namingService = NamingFactory.createNamingService(registerCenterUrl);
+            namingService = NamingFactory.createNamingService(registerCenterUrl);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RpcException(String.format("连接注册中心[$s]失败", registerCenterUrl), e);
+            throw new RpcException(String.format("连接注册中心[%s]失败", registerCenterUrl), e);
         }
     }
 
@@ -52,7 +52,7 @@ public class NacosRegister extends AbstractRegister {
         try {
             List<Instance> instances = namingService.selectInstances(instance.getServiceName(), healthy);
             return CollectionUtils.isEmpty(instances) ? Collections.emptyList() :
-                    instances.stream().map(value -> toRpcInstance(value)).collect(Collectors.toList());
+                    instances.stream().map(this::toRpcInstance).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RpcException(String.format("查找%s的instance[%s]失败", healthy ? "健康" : "不健康", instance), e);
         }
@@ -65,7 +65,7 @@ public class NacosRegister extends AbstractRegister {
                 if (event instanceof NamingEvent) {
                     List<Instance> instances = ((NamingEvent) event).getInstances();
                     callBack.accept(Objects.isNull(instances) ? Collections.emptyList()
-                            : instances.stream().map(value -> toRpcInstance(value)).collect(Collectors.toList()));
+                            : instances.stream().map(this::toRpcInstance).collect(Collectors.toList()));
                 }
             });
         } catch (Exception e) {
@@ -78,8 +78,9 @@ public class NacosRegister extends AbstractRegister {
     protected List<com.sjq.rpc.register.ServiceInfo> doGetSubscribeServices() {
         try {
             List<ServiceInfo> list = namingService.getSubscribeServices();
-            return Objects.isNull(list) && list.isEmpty() ? Collections.emptyList()
-                    : list.stream().map(value -> toRpcServiceInfo(value)).collect(Collectors.toList());
+            return CollectionUtils.isEmpty(list)
+                    ? Collections.emptyList()
+                    : list.stream().map(this::toRpcServiceInfo).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RpcException("查询所有监听服务失败", e);
         }
@@ -110,9 +111,8 @@ public class NacosRegister extends AbstractRegister {
     }
 
     private com.sjq.rpc.domain.register.Instance toRpcInstance(Instance ins) {
-        com.sjq.rpc.domain.register.Instance instance = new com.sjq.rpc.domain.register.Instance(ins.getServiceName(),
+        return new com.sjq.rpc.domain.register.Instance(ins.getServiceName(),
                 ins.getIp(), ins.getPort(), ins.isHealthy());
-        return instance;
     }
 
     @Override

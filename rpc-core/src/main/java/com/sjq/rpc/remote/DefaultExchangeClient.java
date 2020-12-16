@@ -7,8 +7,8 @@ import java.util.Objects;
 
 public class DefaultExchangeClient extends AbstractExchangeClient {
 
-    private Client client;
-    private String hostAddress;
+    private final Client client;
+    private final String hostAddress;
 
     public DefaultExchangeClient(Client client) {
         this.client = client;

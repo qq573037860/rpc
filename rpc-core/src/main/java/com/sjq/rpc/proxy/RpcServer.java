@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 public @interface RpcServer {
 
     /**
-     * 链接注册中心信息
+     * 连接注册中心信息
      * @return
      */
     RegisterAnnotation[] register() default {};

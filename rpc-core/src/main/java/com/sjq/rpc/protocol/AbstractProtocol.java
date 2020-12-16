@@ -23,11 +23,11 @@ public abstract class AbstractProtocol implements Protocol {
 
     private static final Map<String, Invoker> serverInvokerMap = new ConcurrentHashMap<>();
 
-    protected final Map<String, Server> serverMap = new ConcurrentHashMap<>();
+    private final Map<String, Server> serverMap = new ConcurrentHashMap<>();
 
-    private ProxyFactory proxyFactory;
+    private final ProxyFactory proxyFactory;
 
-    public AbstractProtocol(ProxyFactory proxyFactory) {
+    AbstractProtocol(ProxyFactory proxyFactory) {
         this.proxyFactory = proxyFactory;
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractProtocol implements Protocol {
             throw new RpcException(RpcException.EXECUTION_EXCEPTION, "not found RpcServer of " + ClassUtils.fullClassName(proxy.getClass()));
         }
         ServerConfig serverConfig = getConfig(rpcServer, baseConfig);
-        Invoker invoker = serverInvokerMap.computeIfAbsent(ClassUtils.fullClassName(serviceType), v -> proxyFactory.getInvoker(proxy));
+        Invoker<T> invoker = serverInvokerMap.computeIfAbsent(ClassUtils.fullClassName(serviceType), v -> proxyFactory.getInvoker(proxy));
         String port = String.valueOf(serverConfig.getServerPort());
         if (!serverMap.containsKey(port)) {
             synchronized (this) {
@@ -63,7 +63,7 @@ public abstract class AbstractProtocol implements Protocol {
         return invoker;
     }
 
-    protected Invoker getServerInvoker(String key) {
+    Invoker getServerInvoker(String key) {
         return serverInvokerMap.get(key);
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractProtocol implements Protocol {
         ServerConfig config = baseConfig.clone();
         if (Objects.nonNull(rpcClient)) {
             RegisterAnnotation[] registerAnnotations = rpcClient.register();
-            if (Objects.nonNull(registerAnnotations) && registerAnnotations.length > 0) {
+            if (registerAnnotations.length > 0) {
                 config.setRegister(RegisterInfo.convertToDomain(registerAnnotations[0]));
             }
             if (StringUtils.isNotEmpty(rpcClient.serverUrl())) {
@@ -97,7 +97,7 @@ public abstract class AbstractProtocol implements Protocol {
         ServerConfig config = baseConfig.clone();
         if (Objects.nonNull(rpcServer)) {
             RegisterAnnotation[] registerAnnotations = rpcServer.register();
-            if (Objects.nonNull(registerAnnotations) && registerAnnotations.length > 0) {
+            if (registerAnnotations.length > 0) {
                 config.setRegister(RegisterInfo.convertToDomain(registerAnnotations[0]));
             }
         }

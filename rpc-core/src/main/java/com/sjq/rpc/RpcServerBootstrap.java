@@ -48,13 +48,10 @@ public class RpcServerBootstrap {
     }
 
     private void registerService() {
-        PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class})
-            .stream().forEach(cls -> {
+        PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class}).forEach(cls -> {
             try {
                 protocol.referToInvoker(cls.newInstance(), cls.getInterfaces()[0], serverConfig);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
             logger.info(cls + "服务暴露成功");

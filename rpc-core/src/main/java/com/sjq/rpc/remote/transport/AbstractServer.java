@@ -16,7 +16,7 @@ public abstract class AbstractServer implements ChannelHandler, Server {
 
     private int port;
     private int heartBeatTimeout;
-    private ChannelHandler channelHandler;
+    private final ChannelHandler channelHandler;
 
     public AbstractServer (int port, int heartBeatTimeout, ChannelHandler channelHandler) {
         Objects.requireNonNull(channelHandler, "ChannelHandler can not be null");

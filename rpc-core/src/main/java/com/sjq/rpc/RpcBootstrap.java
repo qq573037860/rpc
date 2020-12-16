@@ -1,13 +1,11 @@
 package com.sjq.rpc;
 
-import com.sjq.rpc.domain.RpcException;
 import com.sjq.rpc.domain.ServerConfig;
 import com.sjq.rpc.protocol.DefaultProtocol;
 import com.sjq.rpc.protocol.Protocol;
 import com.sjq.rpc.proxy.JavassistProxyFactory;
 import com.sjq.rpc.proxy.RpcClient;
 import com.sjq.rpc.support.PackageScanner;
-import com.sjq.rpc.support.StringUtils;
 
 import java.util.Objects;
 
@@ -35,9 +33,7 @@ public class RpcBootstrap {
     }
 
     private void registerClass() {
-        PackageScanner.scanInterfaceByPackagePathAndAnnotaion(scanPage, new Class[]{RpcClient.class})
-            .stream().forEach(cls -> {
-
+        PackageScanner.scanInterfaceByPackagePathAndAnnotaion(scanPage, new Class[]{RpcClient.class}).forEach(cls -> {
             //referToProxy
             protocol.referToProxy(cls, serverConfig);
         });

@@ -14,23 +14,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
 
-    public static final AttributeKey<String> hostAddressAttributeKey = AttributeKey.valueOf("hostAddress");
+    static final AttributeKey<String> hostAddressAttributeKey = AttributeKey.valueOf("hostAddress");
 
-    private final Map<String, Channel> channels = new ConcurrentHashMap();
+    private final Map<String, Channel> channels = new ConcurrentHashMap<>();
 
-    private ChannelHandler channelHandler;
+    private final ChannelHandler channelHandler;
 
-    public NettyServerHandler(ChannelHandler channelHandler) {
+    NettyServerHandler(ChannelHandler channelHandler) {
         this.channelHandler = channelHandler;
     }
 
-    public Map<String, Channel> getChannels() {
+    Map<String, Channel> getChannels() {
         return channels;
     }
 
@@ -69,8 +70,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             String hostAddress = ctx.channel().attr(hostAddressAttributeKey).get();
             NettyChannel channel = NettyChannel.getChannel(ctx.channel());
             try {
-                logger.info("IdleStateEvent triggered, close channel[{}]" + hostAddress);
-                channel.close();
+                if (Objects.nonNull(channel)) {
+                    logger.info("IdleStateEvent triggered, close channel[{}]" + hostAddress);
+                    channel.close();
+                }
             } finally {
                 NettyChannel.removeChannelIfDisconnected(ctx.channel());
             }
@@ -81,10 +84,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof ByteBuf) {
-            try {
-            } finally {
+            //try {
+            //} finally {
                 ReferenceCountUtil.release(msg);
-            }
+            //}
         } else if (msg instanceof Request) {
             NettyChannel channel = NettyChannel.getChannel(ctx.channel());
             channelHandler.received(channel, msg);
@@ -96,11 +99,11 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
 
         //NettyChannel channel = NettyChannel.getChannel(ctx.channel());
-        try {
+        //try {
             //handler.caught(channel, cause);
-        } finally {
+        //} finally {
             NettyChannel.removeChannelIfDisconnected(ctx.channel());
-        }
+        //}
 
         ctx.close();
     }

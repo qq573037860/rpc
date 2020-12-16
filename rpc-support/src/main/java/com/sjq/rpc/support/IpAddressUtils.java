@@ -21,14 +21,14 @@ public class IpAddressUtils {
             Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
             InetAddress ip;
             while (allNetInterfaces.hasMoreElements()) {
-                NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
+                NetworkInterface netInterface = allNetInterfaces.nextElement();
                 if (netInterface.isLoopback() || netInterface.isVirtual() || !netInterface.isUp()) {
                     continue;
                 } else {
                     Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
                     while (addresses.hasMoreElements()) {
                         ip = addresses.nextElement();
-                        if (ip != null && ip instanceof Inet4Address) {
+                        if (ip instanceof Inet4Address) {
                             return ip.getHostAddress();
                         }
                     }

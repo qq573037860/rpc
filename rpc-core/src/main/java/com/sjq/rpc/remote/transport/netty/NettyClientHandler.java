@@ -45,11 +45,11 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         //NettyChannel channel = NettyChannel.getChannel(ctx.channel());
-        try {
+        //try {
             //handler.disconnected(channel);
-        } finally {
+        //} finally {
             NettyChannel.removeChannel(ctx.channel());
-        }
+        //}
 
         if (logger.isInfoEnabled()) {
             logger.info("chanel[{}] disconnects from server, try to reConnect ···", ctx.channel().attr(hostAddressAttributeKey).get());
@@ -73,8 +73,10 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 }
                 //发送心跳
                 NettyChannel channel = NettyChannel.getChannel(ctx.channel());
-                Request request = new RpcRequest(true);
-                channel.send(request, true);
+                if (Objects.nonNull(channel)) {
+                    Request request = new RpcRequest(true);
+                    channel.send(request, true);
+                }
             } finally {
                 NettyChannel.removeChannelIfDisconnected(ctx.channel());
             }
@@ -88,11 +90,11 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             throws Exception {
         logger.error("exceptionCaught", cause);
         //NettyChannel channel = NettyChannel.getChannel(ctx.channel());
-        try {
+        //try {
             //handler.caught(channel, cause);
-        } finally {
+        //} finally {
             NettyChannel.removeChannelIfDisconnected(ctx.channel());
-        }
+        //}
     }
 
 }

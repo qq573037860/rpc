@@ -1,9 +1,14 @@
 package com.sjq.rpc.support;
 
+import org.springframework.util.CollectionUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PackageScanner {
@@ -11,8 +16,8 @@ public class PackageScanner {
     private static final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
     public static List<Class> scanInterfaceByPackagePathAndAnnotaion(String packagePath, Class[] annotations) {
-        boolean annotationFilter = Objects.nonNull(annotations) && annotations.length > 0;
-        List<Class> classes = scanClassByPackagePath(packagePath).stream().filter(cls -> {
+        final boolean annotationFilter = Objects.nonNull(annotations) && annotations.length > 0;
+        return scanClassByPackagePath(packagePath).stream().filter(cls -> {
             if (cls.isInterface() && !cls.isAnnotation()) {
                 if (annotationFilter) {
                     for (Class annotationCls : annotations) {
@@ -26,12 +31,11 @@ public class PackageScanner {
                 return false;
             }
         }).collect(Collectors.toList());
-        return classes;
     }
 
     public static List<Class> scanClassByPackagePathAndAnnotaion(String packagePath, Class[] annotations) {
-        boolean annotationFilter = Objects.nonNull(annotations) && annotations.length > 0;
-        List<Class> scanClasses = scanClassByPackagePath(packagePath).stream().filter(cls -> {
+        final boolean annotationFilter = Objects.nonNull(annotations) && annotations.length > 0;
+        return scanClassByPackagePath(packagePath).stream().filter(cls -> {
             if (!cls.isInterface() && !cls.isAnnotation()) {
                 if (annotationFilter) {
                     for (Class annotationCls : annotations) {
@@ -44,17 +48,16 @@ public class PackageScanner {
             }
             return false;
         }).collect(Collectors.toList());
-        return scanClasses;
     }
 
     public static List<Class> scanClassByPackagePath(String packagePath) {
         //File root = new File(PackageScanner.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceFirst("(?:file:)?/{1}", ""));
 
         List<Class> classes = new ArrayList<>();
-        List<File> directories = new ArrayList();//需要扫描的目录
+        List<File> directories = new ArrayList<>();//需要扫描的目录
         List<String> rootPaths = new ArrayList<>();//项目的根路径
-        Enumeration<URL> fileUrls = null;
-        Enumeration<URL> rootUrls = null;
+        Enumeration<URL> fileUrls;
+        Enumeration<URL> rootUrls;
         try {
             fileUrls = Thread.currentThread().getContextClassLoader().getResources(packagePath.replaceAll("\\.", "/"));
             rootUrls = Thread.currentThread().getContextClassLoader().getResources("");
@@ -62,25 +65,31 @@ public class PackageScanner {
             e.printStackTrace();
             return classes;
         }
+        final String regex = "(?:file:)?/{1}";
         while (fileUrls.hasMoreElements()) {
             URL url = fileUrls.nextElement();
-            File file = new File(url.getFile().replaceFirst("(?:file:)?/{1}", ""));
+            File file = new File(url.getFile().replaceFirst(regex, ""));
             if (file.isDirectory()) {
                 directories.add(file);
             }
         }
         while (rootUrls.hasMoreElements()) {
             URL url = rootUrls.nextElement();
-            rootPaths.add(new File(url.getFile().replaceFirst("(?:file:)?/{1}", "")).getPath());
+            rootPaths.add(new File(url.getFile().replaceFirst(regex, "")).getPath());
         }
 
         for (;;) {
             List<File> directoriesTemp = new ArrayList<>();
             for (File parent : directories) {
+                if (Objects.isNull(parent.listFiles()) || parent.listFiles().length == 0) {
+                    continue;
+                }
                 for (File child : parent.listFiles()) {
                     if (child.isDirectory()) {
                         directoriesTemp.add(child);
-                    } else if (child.getName().endsWith("class")) {
+                        continue;
+                    }
+                    if (child.getName().endsWith("class")) {
                         for (String rootPath : rootPaths) {
                             //剔除项目根路径
                             String path = child.getPath().replace(rootPath, "");
@@ -97,12 +106,11 @@ public class PackageScanner {
                     }
                 }
             }
-            if (directoriesTemp.size() > 0) {
-                directories.clear();
-                directories = directoriesTemp;
-            } else {
+            if (CollectionUtils.isEmpty(directoriesTemp)) {
                 break;
             }
+            directories.clear();
+            directories = directoriesTemp;
         }
         return classes;
     }

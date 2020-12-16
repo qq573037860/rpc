@@ -10,7 +10,7 @@ import java.util.List;
 
 public class NettyDecoder extends ReplayingDecoder {
 
-    private ObjectSerialize serialize = new ProtostuffSerialize();
+    private final ObjectSerialize serialize = new ProtostuffSerialize();
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {

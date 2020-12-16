@@ -8,7 +8,7 @@ public class ThreadLocal<T> {
 
     public T get() {
         Thread thread = Thread.currentThread();
-        Object data = null;
+        Object data;
         if (thread instanceof InternalThread) {
             data = ((InternalThread)thread).getData();
         } else {
