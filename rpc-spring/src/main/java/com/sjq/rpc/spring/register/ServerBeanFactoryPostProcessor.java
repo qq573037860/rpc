@@ -45,8 +45,7 @@ public class ServerBeanFactoryPostProcessor implements InitializingBean, Applica
     @Override
     public void afterPropertiesSet() throws Exception {
         for (String scanPackage: basePackages) {
-            PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class})
-                    .stream().forEach(cls -> {
+            PackageScanner.scanClassByPackagePathAndAnnotation(scanPackage, new Class[]{RpcServer.class}).forEach(cls -> {
                 Object bean = null;
                 try {
                     bean = applicationContext.getBean(cls);

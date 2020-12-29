@@ -48,7 +48,7 @@ public class RpcServerBootstrap {
     }
 
     private void registerService() {
-        PackageScanner.scanClassByPackagePathAndAnnotaion(scanPackage, new Class[]{RpcServer.class}).forEach(cls -> {
+        PackageScanner.scanClassByPackagePathAndAnnotation(scanPackage, new Class[]{RpcServer.class}).forEach(cls -> {
             try {
                 protocol.referToInvoker(cls.newInstance(), cls.getInterfaces()[0], serverConfig);
             } catch (InstantiationException | IllegalAccessException e) {

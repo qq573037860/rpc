@@ -33,7 +33,7 @@ public class RpcBootstrap {
     }
 
     private void registerClass() {
-        PackageScanner.scanInterfaceByPackagePathAndAnnotaion(scanPage, new Class[]{RpcClient.class}).forEach(cls -> {
+        PackageScanner.scanInterfaceByPackagePathAndAnnotation(scanPage, new Class[]{RpcClient.class}).forEach(cls -> {
             //referToProxy
             protocol.referToProxy(cls, serverConfig);
         });
